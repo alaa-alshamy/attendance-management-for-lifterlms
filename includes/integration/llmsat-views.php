@@ -258,7 +258,22 @@ function llms_at_list_table_layout() {
 		<?php $myRequestTable->search_box( __( 'Search Students By ID' ), 'students' ); //Needs To be called after $myRequestTable->prepare_items() ?>
 		<?php $myRequestTable->display(); ?>
 	<?php endif; ?>
-	</form> <?php
+	</form>
+
+	<div class="llms-metabox-section">
+		<h2><?php _e( 'Make attendance for students' ); ?></h2>
+
+		<div class="llms-metabox-field d-all">
+			<select id="llmsat-add-student-select" multiple="multiple" name="_llmsat_add_student"></select>
+		</div>
+
+		<div class="llms-metabox-field d-all d-right">
+			<button class="llms-button-primary" id="llmsat-enroll-students" type="button"><?php _e( 'Present Students' ); ?></button>
+			<div id="llmsat-ajax-response-id" class="llmsat-ajax-response"><span></span></div>
+		</div>
+
+		<div class="clear"></div>
+	</div><?php
 
 }
 

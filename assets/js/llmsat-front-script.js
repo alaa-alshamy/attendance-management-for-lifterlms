@@ -19,10 +19,10 @@ function llmsat_attendance_btn_ajax( postId, usrid ) {
 		data : {
 			action : 'llmsat_attendance_btn_ajax_action',
 			pid : post_id,
-			uid : user_ID
+			uids : user_ID
 		},
 		success : function( response ) {
-			
+
 			var suffix = response.match(/\d+/); // 123
 			console.log(suffix[0]);
 			if ( suffix[0] == "2" ) {

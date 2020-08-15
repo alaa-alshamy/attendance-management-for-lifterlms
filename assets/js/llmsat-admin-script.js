@@ -1,10 +1,10 @@
-
-jQuery(document).ready(function(){
+let $ = jQuery;
+$(document).ready(function(){
     if ( llmsat_block_editor.block_editor_active == "yes" ) {
-        jQuery('#search-submit').on('click', function() {	
+        $('#search-submit').on('click', function() {
             var href = window.location.href.substring(0, window.location.href.indexOf('?'));
             var qs = window.location.href.substring(window.location.href.indexOf('?') + 1, window.location.href.length);
-            var newParam = "s" + '=' +  jQuery('#students-search-input').val();
+            var newParam = "s" + '=' +  $('#students-search-input').val();
 
             if (qs.indexOf('s'+ '=') == -1) {
                 if (qs == '') {
@@ -26,14 +26,55 @@ jQuery(document).ready(function(){
             window.location.replace(href + '?' + qs);
         });
     }
-    
-    jQuery(document).ready(function(){
-        var uri = window.location.toString();
-        if ( uri.indexOf( "&s=" ) > 0 ) {
-            var clean_uri = uri.substring( 0, uri.indexOf( "&s=" ) );
-            window.history.replaceState( {}, document.title, clean_uri );
-            
-        }
-    });
+
+    var uri = window.location.toString();
+    if ( uri.indexOf( "&s=" ) > 0 ) {
+        var clean_uri = uri.substring( 0, uri.indexOf( "&s=" ) );
+        window.history.replaceState( {}, document.title, clean_uri );
+    }
+
+    // init students attendance meta box for admin
+    let screens = [ 'course' ];
+    if ( window.llms && window.llms.post.post_type && -1 !== screens.indexOf( window.llms.post.post_type ) ) {
+
+        // bind
+        const courseId = window.llms.post.id || '';
+        $( '#llmsat-add-student-select' ).llmsStudentsSelect2( { multiple: true, enrolled_in: courseId } );
+
+        $( '#llmsat-enroll-students' ).on( 'click', function() {
+            present_students();
+        } );
+    }
+
+    this.present_students = function() {
+
+        let select    = $( '#llmsat-add-student-select' ),
+          ids        = select.val(),
+          courseId   = window.llms.post.id || '';
+
+        $.ajax({
+            url : LLMS.Ajax.url,
+            type : 'post',
+            data : {
+                action : 'llmsat_attendance_btn_ajax_action',
+                pid : courseId,
+                uids : ids.join(',')
+            },
+            success : function( response ) {
+
+                let suffix = response.match(/\d+/); // 123
+                console.log(suffix[0]);
+                if ( suffix[0] == "2" ) {
+                    $("#llmsat-ajax-response-id span").addClass( 'llmsat-error' );
+                } else if( suffix[0] == "1" || suffix[0] == "3") {
+                    $("#llmsat-ajax-response-id span").addClass( 'llmsat-success' );
+                }
+                $("#llmsat-ajax-response-id span").html( response.replace(/\d+/g, '') );
+
+                select.val( null ).trigger( 'change' );
+            }
+        });
+    };
+
     return;
 });
