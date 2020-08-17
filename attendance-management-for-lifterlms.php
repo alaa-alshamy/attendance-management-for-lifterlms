@@ -106,6 +106,8 @@ class LLMS_Attendance {
 		 */
 		define( 'LLMS_At_TEXT_DOMAIN', 'llms-attendance' );
 
+		define( 'LLMS_AT_COUNTER_META_KEY', '_llmsat_counter' );
+
 		/**
 		 * Plugin Directory
 		 */
@@ -123,7 +125,7 @@ class LLMS_Attendance {
 	}
 
 	/**
-	 * Pugin Include Required Files
+	 * Plugin Include Required Files
 	 */
 	private function includes() {
 

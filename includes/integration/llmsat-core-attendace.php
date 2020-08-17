@@ -110,44 +110,36 @@ class LLMS_AT_Core {
 
         if (!empty($user_ids) && $course_id) {
 
-			$blogtime = current_time('mysql');
-			$student_data = array(
-				"time" => $blogtime,
-				"course_id" => intval($course_id)
-			);
-			list($today_year, $today_month, $today_day, $hour, $minute, $second) = preg_split('([^0-9])', $blogtime);
-			$meta_key = $today_year . "-" . $today_month . "-" . $today_day . "-" . $course_id;
-			$meta_key_count = $today_year . "-" . $today_month . "-" . $course_id;
-			$first_mark_key = "first_mark" . "-" . $course_id;
-			$first_mark_value = $today_year . "-" . $today_month . "-" . $today_day . "-" . $course_id;
+			$nowTimeStamp = strtotime(current_time('mysql'));
 
 			$isSuccess = false;
 			foreach ($user_ids as $user_id) {
 				$user_id = intval($user_id);
 
-				$count = get_user_meta( $user_id, $meta_key_count, true );
-				if (null !== $count) {
-					$count = $count + 1;
-				} else {
-					$count = 1;
-				}
-				/**
-				 * Mark First Attendance Date
-				 */
-				if (null == get_user_meta( $user_id, $first_mark_key, true )) {
-					update_user_meta( $user_id, $first_mark_key, $first_mark_value );
-				}
+				if (llms_is_user_enrolled($user_id, $course_id)) {
+					$latestUpdatedDateTime = llms_get_user_postmeta($user_id, $course_id, LLMS_AT_COUNTER_META_KEY, true, 'updated_date');
+					if ($latestUpdatedDateTime) {
+						// 1 attendance per day
+						$date = new DateTime(explode(' ', $latestUpdatedDateTime)[0]);
+						$date->add(new DateInterval('P1D'));
 
-				/**
-				 * Check if attendance is not marked double
-				 */
-				$attendance = get_user_meta( $user_id, $meta_key, true );
-				if ($attendance == null) {
-					$user_attendance = round($count / $today_day * 100);
-					do_action('lifterlms_mark_attendance', $user_id, $course_id, $user_attendance, $count);
-					update_user_meta( $user_id, $meta_key, $student_data );
-					update_user_meta( $user_id, $meta_key_count, $count );
-					$isSuccess = true;
+						$allowToMakeAttendance = ($nowTimeStamp > $date->getTimestamp());
+					}
+					else {
+						$allowToMakeAttendance = true;
+					}
+
+					if ($allowToMakeAttendance) {
+						$counter = llms_get_user_postmeta($user_id, $course_id, LLMS_AT_COUNTER_META_KEY, true);
+						if ($counter) {
+							$counter += 1;
+						} else {
+							$counter = 1;
+						}
+
+						llms_update_user_postmeta($user_id, $course_id, LLMS_AT_COUNTER_META_KEY, $counter);
+						$isSuccess = true;
+					}
 				}
 			}
 
