@@ -71,7 +71,7 @@ class LLMS_AT_Metabox {
      * @return void
      */
     public function register_attendance_meta_boxes() {
-        $disallow_attendance_text = __( 'DisAllow Attendance ', LLMS_At_TEXT_DOMAIN );
+        $disallow_attendance_text = __( 'Attendance', LLMS_At_TEXT_DOMAIN );
         $disallow_attendance_text = apply_filters( 'llmsat_disallow_attendance_text', $disallow_attendance_text );
         $students_information_text = __( 'Students Attendance Information ', LLMS_At_TEXT_DOMAIN );
         $students_information_text = apply_filters( 'llmsat_students_attendance_information_text', $students_information_text );
@@ -125,10 +125,10 @@ class LLMS_AT_Metabox {
             $disallow = true;
         }
         ?>
-        <div>
+        <div class="llmsat-filed">
 					<input type="checkbox" name="llmsatck1" <?php if( $disallow == true ) { ?>checked="checked"<?php } ?> /> Disallow Attendance
         </div>
-				<div>
+				<div class="llmsat-filed">
 					Max Attendance
 					<input type="number" name="llmsat_max_count" value="<?=$maxCount?>" />
 				</div>
