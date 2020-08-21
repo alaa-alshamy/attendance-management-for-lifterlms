@@ -63,39 +63,25 @@ class LLMS_AT_Core {
         if( ! $course_id || get_post_type( $course_id ) != 'course' ) {
             return false;
         }
-        
+
         $course = new LLMS_Course( $course_id );
         if( $course->has_date_passed( 'end_date' ) ) {
             return;
-        } 
+        }
 
-        $student           = llms_get_student( $user_id );
-        $blogtime          = current_time( 'mysql' );
-        list( $today_year, $today_month, $today_day, $hour, $minute, $second ) = preg_split( '([^0-9])', $blogtime );
-        $key               = $today_year."-".$today_month."-". $today_day."-".$course_id;
-        $attendance        = get_user_meta( $user_id, $key, true );
-        $disallow          = get_post_meta( $course_id, 'llmsatck1', true );
-        $has_access        = $student->is_enrolled( $course->get( 'id' ) );
-        // $meta_key = $today_year."-".$today_month."-".$today_day."-".$course_id;
-        // $count_key = $today_year."-".$today_month."-".$course_id;
-        // $meta_value = get_user_meta( $user_id, $meta_key, true );
-        // $count_value = get_user_meta( $user_id, $count_key, true );
-        // if ( $meta_value != null ) {
-        //     delete_user_meta( $user_id, $meta_key, $meta_value );
-        // }
-        // if ( null != $count_value ) {
-        //     delete_user_meta( $user_id, $count_key, $count_value );
-        // }
-        $attendance_button_text = __( "Mark Present", LLMS_At_TEXT_DOMAIN );
-        $attendance_button_text = apply_filters( "llms_attendance_button_text", $attendance_button_text );
-        $output = "";
+        if (
+			('yes' === get_option( 'llms_integration_global_attendance_enabled', 'no' ))
+			&& (get_post_meta( $course_id, 'llmsatck1', true ) !== "on")
+			&& llms_is_user_enrolled($user_id, $course_id)
+		) {
+			$attendance_button_text = __( "Mark Present", LLMS_At_TEXT_DOMAIN );
+			$attendance_button_text = apply_filters( "llms_attendance_button_text", $attendance_button_text );
 
-        if ( $disallow != "on" && 'yes' === get_option( 'llms_integration_global_attendance_enabled', 'no' ) && null == $attendance && $has_access ) {
-            $output .= '<input type="submit" value="'.$attendance_button_text.'" href="javascript:;" onclick="llmsat_attendance_btn_ajax('.$course_id.', '.$user_id.')" class="llmsat-attendance-btn llmsat-btn"/>';   
-            $output .= '<div id="llmsat-ajax-response-id" class="llmsat-ajax-response"><span></span></div>'; 
-        }   
+			$output = '<input type="submit" value="'.$attendance_button_text.'" href="javascript:;" onclick="llmsat_attendance_btn_ajax('.$course_id.', '.$user_id.')" class="llmsat-attendance-btn llmsat-btn"/>';
+            $output .= '<div id="llmsat-ajax-response-id" class="llmsat-ajax-response"><span></span></div>';
 
-        echo $output;
+			echo $output;
+        }
     }
 
     /**

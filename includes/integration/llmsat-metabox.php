@@ -118,27 +118,35 @@ class LLMS_AT_Metabox {
     public function show_attendance_meta_box() {
 
         $post_id  = absint( sanitize_text_field( $_REQUEST['post'] ) );
-        $disallow = get_post_meta( $post_id, 'llmsatck1', true );
+        $metaData = get_post_meta( $post_id );
+        $disallow = $metaData['llmsatck1'][0];
+        $maxCount = $metaData['llmsat_max_count'][0];
         if ( $disallow == 'on' ) {
             $disallow = true;
         }
         ?>
         <div>
-            <input type="checkbox" name="llmsatck1" <?php if( $disallow == true ) { ?>checked="checked"<?php } ?> />  Disallow Attendance
+					<input type="checkbox" name="llmsatck1" <?php if( $disallow == true ) { ?>checked="checked"<?php } ?> /> Disallow Attendance
         </div>
-        <?php 
+				<div>
+					Max Attendance
+					<input type="number" name="llmsat_max_count" value="<?=$maxCount?>" />
+				</div>
+        <?php
     }
 
     /**
      * Saves the meta box post
-     * @param $post_id post_id where metabox is to be saved
+     * @param $post_id int post_id where metabox is to be saved
      */
     public function save_meta_box( $post_id ) {
 
         $post_type          = get_post_type( $post_id );
         $meta_field_value_1 = sanitize_text_field( $_POST['llmsatck1'] );
+        $meta_field_value_2 = sanitize_text_field( $_POST['llmsat_max_count'] );
         if( trim( $post_type ) == 'course' ) {
             update_post_meta( $post_id, 'llmsatck1', $meta_field_value_1 );
+            update_post_meta( $post_id, 'llmsat_max_count', $meta_field_value_2 );
         }
     }
 }

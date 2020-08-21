@@ -46,7 +46,7 @@ $(document).ready(function(){
         } );
     }
 
-    this.present_students = function() {
+    present_students = function() {
 
         let select    = $( '#llmsat-add-student-select' ),
           ids        = select.val(),

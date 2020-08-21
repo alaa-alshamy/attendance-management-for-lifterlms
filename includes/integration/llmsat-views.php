@@ -20,7 +20,7 @@ class LLMS_Attendance_List_Table_Class extends WP_List_Table {
 		] );
 	}
 
-	
+
 	/**
 	 * Function to filter data based on order , order_by & searched items
 	 *
@@ -32,104 +32,95 @@ class LLMS_Attendance_List_Table_Class extends WP_List_Table {
 	public function list_table_data_fun( $orderby='', $order='' , $search_term='' ) {
 
 		$users_array = array();
-		$args        = array();
-		$users     	 = "";
-		if( !empty( $search_term ) ) {
-			$searchcol = array(
-				'ID',
-				'user_email',
-				'user_login',
-				'user_nicename',
-				'user_url',
-				'display_name'
-			);
-			
-			$args  = array(
-				'fields'         => 'ID', 
-				'orderby'        => $orderby , 
-				'order'          => $order , 
-				'search'         => intval( sanitize_text_field( $_REQUEST["s"] ) ) ,
-				'search_columns' => $searchcol
+	  $course_id = get_the_ID();
+	  if (
+	  	$course_id
+			&& 'yes' === get_option( 'llms_integration_global_attendance_enabled', 'no' )
+	  	&& 'on' !== get_post_meta( $course_id, 'llmsatck1', true )
+		){
+			$args        = array();
+			if( !empty( $search_term ) ) {
+				$searchcol = array(
+					'ID',
+					'user_email',
+					'user_login',
+					'user_nicename',
+					'user_url',
+					'display_name'
+				);
+
+				$args  = array(
+					'fields'         => 'ID',
+					'orderby'        => $orderby ,
+					'order'          => $order ,
+					'search'         => intval( sanitize_text_field( $_REQUEST["s"] ) ) ,
+					'search_columns' => $searchcol
 				);
 			} else {
-					if( $order == "asc" && $orderby == "id" ) {
-						$args = array(
-							'orderby'      => 'ID',
-							'order'        => 'ASC',
-							'fields'       => 'ID', 
-						); 
+				if( $order == "asc" && $orderby == "id" ) {
+					$args = array(
+						'orderby'      => 'ID',
+						'order'        => 'ASC',
+						'fields'       => 'ID',
+					);
 				} elseif ( $order == "desc" && $orderby == "id"  ) {
-						$args = array(
-							'orderby'      => 'ID',
-							'order'        => 'DESC',
-							'fields'       => 'ID', 
-						);
-					
+					$args = array(
+						'orderby'      => 'ID',
+						'order'        => 'DESC',
+						'fields'       => 'ID',
+					);
+
 				} elseif ( $order == "desc" && $orderby == "title"  ) {
-						$args = array(
-							'orderby'      => 'name',
-							'order'        => 'DESC',
-							'fields'       => 'ID', 
-						);
+					$args = array(
+						'orderby'      => 'name',
+						'order'        => 'DESC',
+						'fields'       => 'ID',
+					);
 				} elseif ( $order == "asc" && $orderby == "title"  ) {
 					$args = array(
 						'orderby'      => 'name',
 						'order'        => 'ASC',
-						'fields'       => 'ID', 
+						'fields'       => 'ID',
 					);
 				} else {
 					$args = array(
 						'orderby'      => 'ID',
 						'order'        => 'DESC',
-						'fields'       => 'ID', 
+						'fields'       => 'ID',
 					);
-				}
-			
-			}
-			
-			$course_id = get_the_ID();
-			$disallow  = get_post_meta( $course_id, 'llmsatck1', true );
-			$course    = llms_get_post( $course_id );
-            $enrolled  = llms_get_enrolled_students( $course->get( 'id' ), 'enrolled' );
-    
-			$students = $users = get_users( $args );
-			
-			
-			if( count( $users ) > 0 ) {
-				foreach ( $users as $student ) {
-					$user_id   = absint( $student );
-					if ( in_array( $user_id, $enrolled ) ) {
-						$blogtime  = current_time( 'mysql' );
-						list( $today_year, $today_month, $today_day, $hour, $minute, $second ) = preg_split( '([^0-9])', $blogtime );
-						$key               = $today_year."-".$today_month."-". $today_day."-".$course_id;
-						$attendance        = get_user_meta( $user_id, $key, true );
-						$student           = llms_get_student( $user_id );
-						$has_access        = $student->is_enrolled( $course->get( 'id' ) );
-						$dateObj           = DateTime::createFromFormat('!m', $today_month );
-						$monthName         = $dateObj->format('F');
-						$author_info       = get_userdata( $user_id );
-						$days              = cal_days_in_month( CAL_GREGORIAN, $today_month, $today_year );
-						$meta_key_count    = $today_year. "-". $today_month."-".$course_id;
-						if ( null !== get_user_meta( $user_id, $meta_key_count, true ) && $user_id != 0 && $has_access && $disallow != "on" && 'yes' === get_option( 'llms_integration_global_attendance_enabled', 'no' )  ) {
-							$count         = get_user_meta( $user_id, $meta_key_count, true );
-							$count         = intval( $count );
-							$days          = intval( $days );
-							$attendance    = $count/$today_day * 100; 
-							//delete_user_meta( $user->ID, $key, $user_video_data );
-							$users_array[] = array(
-								"id"          => $user_id,
-								"title"       => '<b><a href="' .get_author_posts_url( $user_id ). '"> '. $author_info->display_name .'</a></b>' ,
-								"attendance_count" => $count,
-								"attendance_percen"=> round( $attendance ).'%',
-							);
-						}
-						# code...
-					}
 				}
 			}
 
+			// TODO make it take $args
+			$enrolledStudents  = llms_get_enrolled_students( $course_id, 'enrolled' );
+
+			if(
+				count( $enrolledStudents ) > 0
+			) {
+				foreach ( $enrolledStudents as $student ) {
+					$user_id = absint( $student );
+					$author_info = get_userdata( $user_id );
+					$count = llms_get_user_postmeta($user_id, $course_id, LLMS_AT_COUNTER_META_KEY, true);
+					if (
+						$user_id != 0
+						&& $count
+					) {
+						$count = intval( $count );
+						$maxAttendanceCount = intval(get_post_meta($course_id, 'llmsat_max_count', true));
+						$users_array[] = array(
+							"id"          => $user_id,
+							"title"       => '<b><a href="' . get_author_posts_url( $user_id ) . '"> ' . $author_info->display_name . '</a></b>',
+							"attendance_count" => $count,
+							"attendance_percen"=> round($count/$maxAttendanceCount * 100) . '%',
+						);
+					}
+				}
+			}
+		}
+
 		return $users_array;
 	}
+
 	//prepare_items
 	public function prepare_items() {
 
@@ -142,7 +133,7 @@ class LLMS_Attendance_List_Table_Class extends WP_List_Table {
 
 			$search_term  = sanitize_text_field( isset( $_GET['s'] ) ? trim( $_GET['s'] ) : "" );
 		}
-		
+
 		$datas        = $this->list_table_data_fun( $orderby, $order, $search_term );
 
 
@@ -161,7 +152,8 @@ class LLMS_Attendance_List_Table_Class extends WP_List_Table {
 
 		$this->_column_headers = array( $columns, $hidden, $sortable );
 	}
-		//get_columns
+
+	//get_columns
 	public function get_columns() {
 
 		$columns = array(
@@ -169,7 +161,7 @@ class LLMS_Attendance_List_Table_Class extends WP_List_Table {
 			"id"                => __( "ID", LLMS_At_TEXT_DOMAIN ),
 			"title"             => __( "Enrolled Students", LLMS_At_TEXT_DOMAIN  ),
 			"attendance_count"  => __( "Attendance Count", LLMS_At_TEXT_DOMAIN ),
-			"attendance_percen" => __( "Attendance Percentage", LLMS_At_TEXT_DOMAIN ),		
+			"attendance_percen" => __( "Attendance Percentage", LLMS_At_TEXT_DOMAIN ),
 		);
 
 		return $columns;
@@ -185,8 +177,8 @@ class LLMS_Attendance_List_Table_Class extends WP_List_Table {
 			"id"    => array( "id", true ),
 		);
 
-	}	
-	
+	}
+
 	/**
 	 * Generate the table navigation above or below the table
 	 *
@@ -225,17 +217,17 @@ class LLMS_Attendance_List_Table_Class extends WP_List_Table {
 	public function column_default( $item, $column_name ){
 		switch ( $column_name ) {
 			case 'id':
-	
+
 			case 'title':
 
 			case 'attendance_count':
 
 			case 'attendance_percen':
 			return $item[ $column_name ];
-			
+
 			default:
 				return "no value";
-				
+
 		}
 
 	}
