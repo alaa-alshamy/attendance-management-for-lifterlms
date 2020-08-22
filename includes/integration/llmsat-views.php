@@ -24,12 +24,12 @@ class LLMS_Attendance_List_Table_Class extends WP_List_Table {
 	/**
 	 * Function to filter data based on order , order_by & searched items
 	 *
-	 * @param string $orderby
+	 * @param string $orderBy
 	 * @param string $order
 	 * @param string $search_term
 	 * @return array $users_array()
 	 */
-	public function list_table_data_fun( $orderby='', $order='' , $search_term='' ) {
+	public function list_table_data_fun( $orderBy='', $order='' , $search_term='' ) {
 
 		$users_array = array();
 	  $course_id = get_the_ID();
@@ -38,61 +38,37 @@ class LLMS_Attendance_List_Table_Class extends WP_List_Table {
 			&& 'yes' === get_option( 'llms_integration_global_attendance_enabled', 'no' )
 	  	&& 'on' !== get_post_meta( $course_id, 'llmsatck1', true )
 		){
-			$args        = array();
-			if( !empty( $search_term ) ) {
-				$searchcol = array(
-					'ID',
-					'user_email',
-					'user_login',
-					'user_nicename',
-					'user_url',
-					'display_name'
-				);
-
-				$args  = array(
-					'fields'         => 'ID',
-					'orderby'        => $orderby ,
-					'order'          => $order ,
-					'search'         => intval( sanitize_text_field( $_REQUEST["s"] ) ) ,
-					'search_columns' => $searchcol
-				);
-			} else {
-				if( $order == "asc" && $orderby == "id" ) {
-					$args = array(
-						'orderby'      => 'ID',
-						'order'        => 'ASC',
-						'fields'       => 'ID',
-					);
-				} elseif ( $order == "desc" && $orderby == "id"  ) {
-					$args = array(
-						'orderby'      => 'ID',
-						'order'        => 'DESC',
-						'fields'       => 'ID',
-					);
-
-				} elseif ( $order == "desc" && $orderby == "title"  ) {
-					$args = array(
-						'orderby'      => 'name',
-						'order'        => 'DESC',
-						'fields'       => 'ID',
-					);
-				} elseif ( $order == "asc" && $orderby == "title"  ) {
-					$args = array(
-						'orderby'      => 'name',
-						'order'        => 'ASC',
-						'fields'       => 'ID',
-					);
-				} else {
-					$args = array(
-						'orderby'      => 'ID',
-						'order'        => 'DESC',
-						'fields'       => 'ID',
-					);
-				}
+			$queryArgs = [
+				'post_id'  => $course_id,
+				'statuses' => 'enrolled',
+				'page'     => 1,
+				'per_page' => 50,
+			];
+			$orderBy = $orderBy ?: 'id';
+			$order = ($order == 'desc' ? 'DESC' : 'ASC');
+			if( $search_term ) {
+				$queryArgs['search'] = sanitize_text_field( $search_term );
 			}
 
-			// TODO make it take $args
-			$enrolledStudents  = llms_get_enrolled_students( $course_id, 'enrolled' );
+			if ($orderBy == 'id') {
+				$queryArgs['sort'] = [
+					'id' => $order,
+				];
+			}
+			else if ($orderBy == 'title') {
+				$queryArgs['sort'] = [
+					'first_name' => $order,
+					'last_name'  => $order,
+				];
+			}
+
+			// this coming from same code as "llms_get_enrolled_students" but with custom args
+			// $enrolledStudents  = llms_get_enrolled_students( $course_id, 'enrolled' );
+			$enrolledStudents = [];
+			$query = new LLMS_Student_Query( $queryArgs );
+			if ( $query->results ) {
+				$enrolledStudents = wp_list_pluck( $query->results, 'id' );
+			}
 
 			if(
 				count( $enrolledStudents ) > 0
@@ -247,7 +223,7 @@ function llms_at_list_table_layout() {
 	<input type="hidden" name="page" value="<?php echo $pagenow ?>" />
 	<?php if( isset( $myRequestTable ) ) : ?>
 		<?php $myRequestTable->prepare_items();  ?>
-		<?php $myRequestTable->search_box( __( 'Search Students By ID' ), 'students' ); //Needs To be called after $myRequestTable->prepare_items() ?>
+		<?php $myRequestTable->search_box( __( 'Search students by name or email' ), 'students' ); //Needs To be called after $myRequestTable->prepare_items() ?>
 		<?php $myRequestTable->display(); ?>
 	<?php endif; ?>
 	</form>
