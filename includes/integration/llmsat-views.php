@@ -63,29 +63,38 @@ class LLMS_Attendance_List_Table_Class extends WP_List_Table {
 			}
 
 			// this coming from same code as "llms_get_enrolled_students" but with custom args
-			// $enrolledStudents  = llms_get_enrolled_students( $course_id, 'enrolled' );
-			$enrolledStudents = [];
+			// $enrolledStudentsIds  = llms_get_enrolled_students( $course_id, 'enrolled' );
+			$enrolledStudentsIds = [];
 			$query = new LLMS_Student_Query( $queryArgs );
 			if ( $query->results ) {
-				$enrolledStudents = wp_list_pluck( $query->results, 'id' );
+				$enrolledStudentsIds = wp_list_pluck( $query->results, 'id' );
 			}
 
 			if(
-				count( $enrolledStudents ) > 0
+				count( $enrolledStudentsIds ) > 0
 			) {
-				foreach ( $enrolledStudents as $student ) {
-					$user_id = absint( $student );
-					$author_info = get_userdata( $user_id );
-					$count = llms_get_user_postmeta($user_id, $course_id, LLMS_AT_COUNTER_META_KEY, true);
+				foreach ( $enrolledStudentsIds as $studentId ) {
+					$studentId = absint( $studentId );
+
+					$student = new LLMS_Student( $studentId );
+					$first = $student->get( 'first_name' );
+					$last  = $student->get( 'last_name' );
+					if ( $first && $last ) {
+			  		$studentName = $first . ' ' . $last;
+					} else {
+			  		$studentName = $student->get( 'display_name' );
+					}
+
+					$count = llms_get_user_postmeta($studentId, $course_id, LLMS_AT_COUNTER_META_KEY, true);
 					if (
-						$user_id != 0
+						$studentId != 0
 						&& $count
 					) {
 						$count = intval( $count );
 						$maxAttendanceCount = intval(get_post_meta($course_id, 'llmsat_max_count', true));
 						$users_array[] = array(
-							"id"          => $user_id,
-							"title"       => '<b><a href="' . get_author_posts_url( $user_id ) . '"> ' . $author_info->display_name . '</a></b>',
+							"id"          => $studentId,
+							"title"       => '<b><a href="' . get_author_posts_url( $studentId ) . '"> ' . $studentName . '</a></b>',
 							"attendance_count" => $count,
 							"attendance_percen"=> round($count/$maxAttendanceCount * 100) . '%',
 						);
