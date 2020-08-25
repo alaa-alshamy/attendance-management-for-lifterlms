@@ -25,21 +25,21 @@ class LLMS_AT_Core {
     }
 
     private function hooks() {
-        add_action( 
-            'lifterlms_single_course_before_summary',           
-            [ $this,'add_content_before_course_summary' ], 
-            10, 
+        add_action(
+            'lifterlms_single_course_before_summary',
+            [ $this,'add_content_before_course_summary' ],
+            10,
             0
         );
 
-        add_action( 
-            'wp_ajax_llmsat_attendance_btn_ajax_action',   
+        add_action(
+            'wp_ajax_llmsat_attendance_btn_ajax_action',
             [ $this, 'llmsat_attendance_btn_ajax_action' ],
-            10 
+            10
         );
 
-        add_action( 'wp_ajax_nopriv_llmsat_attendance_btn_ajax_action', 
-            [ $this, 'llmsat_attendance_btn_ajax_action' ], 
+        add_action( 'wp_ajax_nopriv_llmsat_attendance_btn_ajax_action',
+            [ $this, 'llmsat_attendance_btn_ajax_action' ],
             10
         );
     }

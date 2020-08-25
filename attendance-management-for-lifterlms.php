@@ -1,12 +1,12 @@
 <?php
 /**
  * Attendance Management For LifterLMS WordPress Plugin
- * 
+ *
  * @package Attendance Management For LifterLMS/Main
- * 
+ *
  * @since 1.0.0
  * @version 1.0.0
- * 
+ *
  * Plugin Name: Attendance Management For LifterLMS
  * Plugin URI:  https://github.com/MuhammadFaizanHaidar/attendance-management-for-lifterlms
  * Description: This addon provides the Attendance functionality for LifterLMS registered users
@@ -209,26 +209,26 @@ class LLMS_Attendance {
 
 		if( $screen->post_type == "course" ) {
 			$active = "no";
-			if( function_exists('has_blocks') ) { 
+			if( function_exists('has_blocks') ) {
 				$active = "yes";
 			}
 			/**
 			 * plugin's admin style
 			 */
-			wp_enqueue_style( 'llmsat-admin-style', 
-				LLMS_At_ASSETS_URL . 'css/llmsat-admin-style.css', 
-				self::VERSION, 
-				null 
+			wp_enqueue_style( 'llmsat-admin-style',
+				LLMS_At_ASSETS_URL . 'css/llmsat-admin-style.css',
+				self::VERSION,
+				null
 			);
 
 			/**
 			 * plugin's admin script
 			 */
-			wp_enqueue_script( 'llmsat-admin-script', 
-				LLMS_At_ASSETS_URL . 'js/llmsat-admin-script.js', 
-				[ 'jquery' ], 
-				self::VERSION, 
-				true 
+			wp_enqueue_script( 'llmsat-admin-script',
+				LLMS_At_ASSETS_URL . 'js/llmsat-admin-script.js',
+				[ 'jquery' ],
+				self::VERSION,
+				true
 			);
 
 			wp_localize_script( 'llmsat-admin-script', 'llmsat_block_editor',
@@ -244,23 +244,23 @@ class LLMS_Attendance {
 	 */
 	public function frontend_enqueue_scripts() {
 		$active = "no";
-		if( function_exists( 'is_gutenberg_page' ) && is_gutenberg_page() ) { 
+		if( function_exists( 'is_gutenberg_page' ) && is_gutenberg_page() ) {
 			$active = "yes";
 		}
 		/**
 		 * plugin's frontend script
 		 */
-		wp_enqueue_script( 'llmsat-front-script', 
-			LLMS_At_ASSETS_URL . 'js/llmsat-front-script.js', 
-			[ 'jquery' ], 
-			self::VERSION, 
+		wp_enqueue_script( 'llmsat-front-script',
+			LLMS_At_ASSETS_URL . 'js/llmsat-front-script.js',
+			[ 'jquery' ],
+			self::VERSION,
 			true
 		);
-		
-		wp_enqueue_style( 'llmsat-front-style', 
-			LLMS_At_ASSETS_URL . 'css/llmsat-front-style.css', 
-			self::VERSION, 
-			null 
+
+		wp_enqueue_style( 'llmsat-front-style',
+			LLMS_At_ASSETS_URL . 'css/llmsat-front-style.css',
+			self::VERSION,
+			null
 		);
 
 		wp_localize_script( 'llmsat-front-script', 'llmsat_ajax_url',
@@ -296,8 +296,8 @@ function llmsat_ready() {
 	if ( ! class_exists( 'LifterLMS' ) ) {
 		$class   = 'notice is-dismissible error';
 		$message = __( 'Attendance Management For LifterLMS add-on requires <a href="https://wordpress.org/plugins/lifterlms/" 
-			target="_BLANK">LifterLMS</a> plugin to be activated.', 
-			'llms-attendance' 
+			target="_BLANK">LifterLMS</a> plugin to be activated.',
+			'llms-attendance'
 		);
 		printf( '<div id="message" class="%s"> <p>%s</p></div>', $class, $message );
 		deactivate_plugins( plugin_basename( __FILE__ ) );

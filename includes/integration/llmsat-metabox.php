@@ -15,36 +15,36 @@ class LLMS_AT_Metabox {
 	/**
 	 * Constructor
 	 */
-	public function __construct() { 
+	public function __construct() {
 
         $this->hooks();
     }
-    
+
     private function hooks() {
 
-        add_action( 
-            'add_meta_boxes', 
+        add_action(
+            'add_meta_boxes',
             [ $this, 'register_attendance_meta_boxes' ]
         );
 
-        add_action( 
-            'save_post',      
+        add_action(
+            'save_post',
             [ $this, 'save_meta_box' ]
         );
-        
-        add_action( 
-            'save_post', 
-            [ $this, 'llms_attendance_add_query_string'], 
-            100, 
-            3 
+
+        add_action(
+            'save_post',
+            [ $this, 'llms_attendance_add_query_string'],
+            100,
+            3
         );
 
-        add_action( 
-            'post_updated', 
-            [ $this, 'llms_attendance_add_query_string' ], 
-            10, 
-            3 
-        ); 
+        add_action(
+            'post_updated',
+            [ $this, 'llms_attendance_add_query_string' ],
+            10,
+            3
+        );
     }
 
     /**
@@ -81,22 +81,22 @@ class LLMS_AT_Metabox {
         $disallow_attendance_text = apply_filters( 'llmsat_disallow_attendance_text', $disallow_attendance_text );
         $students_information_text = __( 'Students Attendance Information ', LLMS_At_TEXT_DOMAIN );
         $students_information_text = apply_filters( 'llmsat_students_attendance_information_text', $students_information_text );
-        add_meta_box( 
-            'llmsat-metabox-id', 
-            $disallow_attendance_text,          
-            [ $this, 'show_attendance_meta_box' ], 
-            'course', 
-            'side', 
-            'high' 
+        add_meta_box(
+            'llmsat-metabox-id',
+            $disallow_attendance_text,
+            [ $this, 'show_attendance_meta_box' ],
+            'course',
+            'side',
+            'high'
         );
 
-        add_meta_box( 
+        add_meta_box(
             'llmsat-students-metabox-id',
-            $students_information_text, 
-            [ $this, 'show_student_listing_meta_box' ], 
-            'course', 
-            'advanced', 
-            'high' 
+            $students_information_text,
+            [ $this, 'show_student_listing_meta_box' ],
+            'course',
+            'advanced',
+            'high'
         );
     }
 

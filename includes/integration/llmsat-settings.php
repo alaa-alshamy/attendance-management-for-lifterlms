@@ -9,16 +9,16 @@ class LLMS_Attendance_Settings {
 	/**
 	 * Constructor
 	 */
-	public function __construct() { 
-		add_filter( 
-			'lifterlms_integrations_settings_lifterlms_attendance', 
-			[ $this, 'integration_settings' ] 
+	public function __construct() {
+		add_filter(
+			'lifterlms_integrations_settings_lifterlms_attendance',
+			[ $this, 'integration_settings' ]
 		);
-		
-		add_action( 
+
+		add_action(
 			'lifterlms_settings_save_integrations',
-			[ $this, 'save' ], 
-			10 
+			[ $this, 'save' ],
+			10
 		);
 
 	}
@@ -116,17 +116,17 @@ class LLMS_Attendance_Settings {
 
 	/**
 	 * Flush rewrite rules when saving settings
-	 * 
+	 *
 	 * @return   void
 	 */
 	public function save() {
 
 		$integration = LLMS()->integrations()->get_integration( 'lifterlms_attendance' );
-		
+
 		if ( $integration && $integration->is_available() ) {
 			flush_rewrite_rules();
 		}
-		
+
 	}
 
 }
