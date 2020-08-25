@@ -107,6 +107,9 @@ class LLMS_Attendance {
 		define( 'LLMS_At_TEXT_DOMAIN', 'llms-attendance' );
 
 		define( 'LLMS_AT_COUNTER_META_KEY', '_llmsat_counter' );
+		define( 'LLMS_AT_ENABLE_FOR_STUDENTS_META_KEY', '_llmsat_enable_for_students' );
+
+		define( 'LLMS_AT_GLOBAL_ENABLE_FOR_STUDENTS_OPTION_KEY', 'llms_integration_global_attendance_enable_for_students' );
 
 		/**
 		 * Plugin Directory

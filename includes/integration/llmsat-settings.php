@@ -54,7 +54,7 @@ class LLMS_Attendance_Settings {
 			'type' 		=> 'checkbox',
 			'title'     => __( 'Enable / Disable', LLMS_At_TEXT_DOMAIN ),
 		);
-		
+
 		$content[] = array(
 			'desc' 		=> __( 'Allow global attendance for all courses.', LLMS_At_TEXT_DOMAIN ),
 			'default'	=> 'yes',
@@ -62,7 +62,15 @@ class LLMS_Attendance_Settings {
 			'type' 		=> 'checkbox',
 			'title'     => __( 'Allow / DisAllow', LLMS_At_TEXT_DOMAIN ),
 		);
-		
+
+		$content[] = array(
+			'desc' 		=> __( 'Allow global attendance button for students for all courses.', LLMS_At_TEXT_DOMAIN ),
+			'default'	=> 'yes',
+			'id' 		=> LLMS_AT_GLOBAL_ENABLE_FOR_STUDENTS_OPTION_KEY,
+			'type' 		=> 'checkbox',
+			'title'     => __( 'Allow / DisAllow', LLMS_At_TEXT_DOMAIN ),
+		);
+
         $content[] = array(
 			'type' => 'sectionend',
 			'id'   => 'lifterlms_attendance_options'

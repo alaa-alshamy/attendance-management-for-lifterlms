@@ -6,6 +6,12 @@ defined( 'ABSPATH' ) || exit;
  */
 class LLMS_AT_Metabox {
 
+	private $allowSelectOptions = [
+		'' => 'Global setting',
+		'yes' => 'Enable',
+		'no' => 'Disable',
+	];
+
 	/**
 	 * Constructor
 	 */
@@ -64,7 +70,7 @@ class LLMS_AT_Metabox {
         }
         return;
     }
-    
+
     /**
      * Register the meta box for the attendance management system
      * @param void
@@ -119,16 +125,24 @@ class LLMS_AT_Metabox {
 
         $post_id  = absint( sanitize_text_field( $_REQUEST['post'] ) );
         $metaData = get_post_meta( $post_id );
-        $disallow = $metaData['llmsatck1'][0];
+        $disallow = ('on' === $metaData['llmsatck1'][0]);
         $maxCount = $metaData['llmsat_max_count'][0];
-        if ( $disallow == 'on' ) {
-            $disallow = true;
-        }
+				$enableAttendanceForStudentsValue = $metaData[LLMS_AT_ENABLE_FOR_STUDENTS_META_KEY][0] ?? '';
+
+				$globalEnableAttendanceForStudentsValue = ('yes' === get_option( LLMS_AT_GLOBAL_ENABLE_FOR_STUDENTS_OPTION_KEY, 'yes' ) ? 'Enabled' : 'Disabled');
         ?>
-        <div class="llmsat-filed">
-					<input type="checkbox" name="llmsatck1" <?php if( $disallow == true ) { ?>checked="checked"<?php } ?> /> Disallow Attendance
+        <div class="llmsat-field">
+					<input type="checkbox" name="llmsatck1" <?php if( $disallow ) { ?>checked="checked"<?php } ?> /> Disallow Attendance
         </div>
-				<div class="llmsat-filed">
+				<div class="llmsat-field">
+					Enable for students
+					<select name="<?=LLMS_AT_ENABLE_FOR_STUDENTS_META_KEY?>">
+						<?php foreach ($this->allowSelectOptions as $key => $value) {?>
+							<option value="<?=$key?>" <?=($key === $enableAttendanceForStudentsValue) ? 'selected' : ''?>><?=$value?> <?=($key === '' ? '(' . $globalEnableAttendanceForStudentsValue . ')' : '')?></option>
+						<?php }?>
+					</select>
+        </div>
+				<div class="llmsat-field">
 					Max Attendance
 					<input type="number" name="llmsat_max_count" value="<?=$maxCount?>" />
 				</div>
@@ -142,11 +156,17 @@ class LLMS_AT_Metabox {
     public function save_meta_box( $post_id ) {
 
         $post_type          = get_post_type( $post_id );
-        $meta_field_value_1 = sanitize_text_field( $_POST['llmsatck1'] );
-        $meta_field_value_2 = sanitize_text_field( $_POST['llmsat_max_count'] );
         if( trim( $post_type ) == 'course' ) {
+						$meta_field_value_1 = sanitize_text_field( $_POST['llmsatck1'] );
+						$meta_field_value_2 = sanitize_text_field( $_POST['llmsat_max_count'] );
+						$meta_field_value_3 = sanitize_text_field( $_POST[LLMS_AT_ENABLE_FOR_STUDENTS_META_KEY] );
+						if (!in_array($meta_field_value_3, array_keys($this->allowSelectOptions))) {
+							$meta_field_value_3 = '';
+						}
+
             update_post_meta( $post_id, 'llmsatck1', $meta_field_value_1 );
             update_post_meta( $post_id, 'llmsat_max_count', $meta_field_value_2 );
+            update_post_meta( $post_id, LLMS_AT_ENABLE_FOR_STUDENTS_META_KEY, $meta_field_value_3 );
         }
     }
 }
