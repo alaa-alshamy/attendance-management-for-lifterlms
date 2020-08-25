@@ -58,7 +58,7 @@ class LLMS_Attendance_Settings {
 		$content[] = array(
 			'desc' 		=> __( 'Allow global attendance for all courses.', LLMS_At_TEXT_DOMAIN ),
 			'default'	=> 'yes',
-			'id' 		=> 'llms_integration_global_attendance_enabled',
+			'id' 		=> LLMS_AT_GLOBAL_ENABLE_OPTION_KEY,
 			'type' 		=> 'checkbox',
 			'title'     => __( 'Allow / DisAllow', LLMS_At_TEXT_DOMAIN ),
 		);

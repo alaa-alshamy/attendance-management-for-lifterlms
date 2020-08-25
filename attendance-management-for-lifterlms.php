@@ -106,9 +106,14 @@ class LLMS_Attendance {
 		 */
 		define( 'LLMS_At_TEXT_DOMAIN', 'llms-attendance' );
 
+		// meta keys
 		define( 'LLMS_AT_COUNTER_META_KEY', '_llmsat_counter' );
+		define( 'LLMS_AT_ENABLE_META_KEY', '_llmsat_enable' );
 		define( 'LLMS_AT_ENABLE_FOR_STUDENTS_META_KEY', '_llmsat_enable_for_students' );
+		define( 'LLMS_AT_MAX_COUNT_META_KEY', '_llmsat_max_count' );
 
+		// options keys
+		define( 'LLMS_AT_GLOBAL_ENABLE_OPTION_KEY', 'llms_integration_global_attendance_enable' );
 		define( 'LLMS_AT_GLOBAL_ENABLE_FOR_STUDENTS_OPTION_KEY', 'llms_integration_global_attendance_enable_for_students' );
 
 		/**
@@ -144,10 +149,14 @@ class LLMS_Attendance {
 				require_once( LLMS_At_INCLUDES_DIR . 'integration/llmsat-metabox.php' );
 			}
 
-
 			if ( file_exists( LLMS_At_INCLUDES_DIR . 'integration/llmsat-shortcodes.php' ) ) {
 
 				require_once( LLMS_At_INCLUDES_DIR . 'integration/llmsat-shortcodes.php' );
+			}
+
+			if ( file_exists( LLMS_At_INCLUDES_DIR . 'functions/general-functions.php' ) ) {
+
+				require_once( LLMS_At_INCLUDES_DIR . 'functions/general-functions.php' );
 			}
 		}
 

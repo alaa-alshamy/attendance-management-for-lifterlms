@@ -6,7 +6,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class LLMS_AT_Metabox {
 
-	private $allowSelectOptions = [
+	private $enableSelectOptions = [
 		'' => 'Global setting',
 		'yes' => 'Enable',
 		'no' => 'Disable',
@@ -102,11 +102,9 @@ class LLMS_AT_Metabox {
 
     public function show_student_listing_meta_box () {
         $course_id = get_the_ID();
-        $course    = llms_get_post( $course_id );
-        $students  = llms_get_enrolled_students( $course->get( 'id' ), 'enrolled' );
-        $disallow  = get_post_meta( $course_id, 'llmsatck1', true );
-        if ( $disallow == 'on' ) {
-            echo '<div class="llmsat-error"><h2>'.__( 'Turn off the disallow attendance option to enlist enrolled students attendance information.', LLMS_At_TEXT_DOMAIN ).' </h2></div>';
+
+        if (!llmsat_is_enabled($course_id)) {
+            echo '<div class="llmsat-error"><h2>'.__( 'Enable attendance option to enlist enrolled students attendance information.', LLMS_At_TEXT_DOMAIN ).' </h2></div>';
             return;
         }
         do_action( 'llmsat_student_dashboard_before_my_attendance' );
@@ -125,29 +123,49 @@ class LLMS_AT_Metabox {
 
         $post_id  = absint( sanitize_text_field( $_REQUEST['post'] ) );
         $metaData = get_post_meta( $post_id );
-        $disallow = ('on' === $metaData['llmsatck1'][0]);
-        $maxCount = $metaData['llmsat_max_count'][0];
+				$enableAttendanceValue = $metaData[LLMS_AT_ENABLE_META_KEY][0] ?? '';
 				$enableAttendanceForStudentsValue = $metaData[LLMS_AT_ENABLE_FOR_STUDENTS_META_KEY][0] ?? '';
+				$maxCount = $metaData[LLMS_AT_MAX_COUNT_META_KEY][0] ?? 0;
 
-				$globalEnableAttendanceForStudentsValue = ('yes' === get_option( LLMS_AT_GLOBAL_ENABLE_FOR_STUDENTS_OPTION_KEY, 'yes' ) ? 'Enabled' : 'Disabled');
+				$isGlobalEnableAttendanceValue = ('yes' === get_option( LLMS_AT_GLOBAL_ENABLE_OPTION_KEY, 'yes' ));
+				$isGlobalEnableAttendanceForStudentsValue = ('yes' === get_option( LLMS_AT_GLOBAL_ENABLE_FOR_STUDENTS_OPTION_KEY, 'yes' ));
+
+				$enabledText = __('Enabled', LLMS_At_TEXT_DOMAIN);
+				$disabledText = __('Disabled', LLMS_At_TEXT_DOMAIN);
+				$enableAttendanceSelectArray = $this->enableSelectOptions;
+				$enableAttendanceSelectArray[0] .= '(' . ($isGlobalEnableAttendanceValue ? $enabledText : $disabledText) . ')';
+
+				$enableAttendanceForStudentsSelectArray = $this->enableSelectOptions;
+				$enableAttendanceForStudentsSelectArray[0] .= '(' . ($isGlobalEnableAttendanceForStudentsValue ? $enabledText : $disabledText) . ')';
         ?>
         <div class="llmsat-field">
-					<input type="checkbox" name="llmsatck1" <?php if( $disallow ) { ?>checked="checked"<?php } ?> /> Disallow Attendance
+					<?php
+					_e('Enable Attendance', LLMS_At_TEXT_DOMAIN);
+					$this->get_select(LLMS_AT_ENABLE_META_KEY, $enableAttendanceSelectArray, $enableAttendanceValue);
+					?>
         </div>
 				<div class="llmsat-field">
-					Enable for students
-					<select name="<?=LLMS_AT_ENABLE_FOR_STUDENTS_META_KEY?>">
-						<?php foreach ($this->allowSelectOptions as $key => $value) {?>
-							<option value="<?=$key?>" <?=($key === $enableAttendanceForStudentsValue) ? 'selected' : ''?>><?=$value?> <?=($key === '' ? '(' . $globalEnableAttendanceForStudentsValue . ')' : '')?></option>
-						<?php }?>
-					</select>
+					<?php
+					_e('Enable For Students', LLMS_At_TEXT_DOMAIN);
+					$this->get_select(LLMS_AT_ENABLE_FOR_STUDENTS_META_KEY, $enableAttendanceForStudentsSelectArray, $enableAttendanceForStudentsValue);
+					?>
         </div>
 				<div class="llmsat-field">
-					Max Attendance
-					<input type="number" name="llmsat_max_count" value="<?=$maxCount?>" />
+					<?php _e('Max Attendance', LLMS_At_TEXT_DOMAIN); ?>
+					<input type="number" name="<?=LLMS_AT_MAX_COUNT_META_KEY?>" value="<?=$maxCount?>" />
 				</div>
         <?php
     }
+
+    public function get_select($name, $arrayOfOptions, $currentValue) {
+			?>
+				<select name="<?=$name?>">
+					<?php foreach ($arrayOfOptions as $key => $value) {?>
+							<option value="<?=$key?>" <?=($key === $currentValue) ? 'selected' : ''?>><?=$value?></option>
+					<?php }?>
+				</select>
+			<?php
+		}
 
     /**
      * Saves the meta box post
@@ -157,16 +175,21 @@ class LLMS_AT_Metabox {
 
         $post_type          = get_post_type( $post_id );
         if( trim( $post_type ) == 'course' ) {
-						$meta_field_value_1 = sanitize_text_field( $_POST['llmsatck1'] );
-						$meta_field_value_2 = sanitize_text_field( $_POST['llmsat_max_count'] );
-						$meta_field_value_3 = sanitize_text_field( $_POST[LLMS_AT_ENABLE_FOR_STUDENTS_META_KEY] );
-						if (!in_array($meta_field_value_3, array_keys($this->allowSelectOptions))) {
-							$meta_field_value_3 = '';
-						}
+						$meta_field_value_1 = sanitize_text_field( $_POST[LLMS_AT_ENABLE_META_KEY] );
+						$meta_field_value_2 = sanitize_text_field( $_POST[LLMS_AT_ENABLE_FOR_STUDENTS_META_KEY] );
+						$meta_field_value_3 = sanitize_text_field( $_POST[LLMS_AT_MAX_COUNT_META_KEY] );
 
-            update_post_meta( $post_id, 'llmsatck1', $meta_field_value_1 );
-            update_post_meta( $post_id, 'llmsat_max_count', $meta_field_value_2 );
-            update_post_meta( $post_id, LLMS_AT_ENABLE_FOR_STUDENTS_META_KEY, $meta_field_value_3 );
+						if (!in_array($meta_field_value_1, array_keys($this->enableSelectOptions))) {
+							$meta_field_value_1 = '';
+						}
+						if (!in_array($meta_field_value_2, array_keys($this->enableSelectOptions))) {
+							$meta_field_value_2 = '';
+						}
+						$meta_field_value_3 = absint($meta_field_value_3);
+
+            update_post_meta( $post_id, LLMS_AT_ENABLE_META_KEY, $meta_field_value_1 );
+						update_post_meta( $post_id, LLMS_AT_ENABLE_FOR_STUDENTS_META_KEY, $meta_field_value_2 );
+            update_post_meta( $post_id, LLMS_AT_MAX_COUNT_META_KEY, $meta_field_value_3 );
         }
     }
 }

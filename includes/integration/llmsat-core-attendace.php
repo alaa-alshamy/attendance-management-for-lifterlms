@@ -53,7 +53,6 @@ class LLMS_AT_Core {
         if(
         	!is_singular( 'course' )
         	|| !is_user_logged_in()
-        	|| ('yes' !== get_option( 'llms_integration_global_attendance_enabled', 'no' ))
 		) {
             return;
         }
@@ -69,19 +68,9 @@ class LLMS_AT_Core {
             return;
         }
 
-        $postMetaData = get_post_meta( $course_id );
-        $disallow = $postMetaData['llmsatck1'][0] ?? '';
-		$enableAttendanceForStudentsValue = $metaData[LLMS_AT_ENABLE_FOR_STUDENTS_META_KEY][0] ?? '';
-
         if (
-			'on' !== $disallow
-			&& (
-				'yes' === $enableAttendanceForStudentsValue
-				|| (
-					!$enableAttendanceForStudentsValue
-					&& 'yes' === get_option( LLMS_AT_GLOBAL_ENABLE_FOR_STUDENTS_OPTION_KEY, 'yes' )
-				)
-			)
+			llmsat_is_enabled($course_id)
+			&& llmsat_is_enabled_for_students($course_id)
 			&& llms_is_user_enrolled($user_id, $course_id)
 		) {
 			$attendance_button_text = __( "Mark Present", LLMS_At_TEXT_DOMAIN );

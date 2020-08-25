@@ -35,8 +35,7 @@ class LLMS_Attendance_List_Table_Class extends WP_List_Table {
 	  $course_id = get_the_ID();
 	  if (
 	  	$course_id
-			&& 'yes' === get_option( 'llms_integration_global_attendance_enabled', 'no' )
-	  	&& 'on' !== get_post_meta( $course_id, 'llmsatck1', true )
+	  	&& llmsat_is_enabled($course_id)
 		){
 			$queryArgs = [
 				'post_id'  => $course_id,
@@ -91,7 +90,7 @@ class LLMS_Attendance_List_Table_Class extends WP_List_Table {
 						&& $count
 					) {
 						$count = intval( $count );
-						$maxAttendanceCount = intval(get_post_meta($course_id, 'llmsat_max_count', true));
+						$maxAttendanceCount = absint(get_post_meta($course_id, LLMS_AT_MAX_COUNT_META_KEY, true));
 						$users_array[] = array(
 							"id"          => $studentId,
 							"title"       => '<b><a href="' . get_author_posts_url( $studentId ) . '"> ' . $studentName . '</a></b>',
