@@ -133,10 +133,10 @@ class LLMS_AT_Metabox {
 				$enabledText = __('Enabled', LLMS_At_TEXT_DOMAIN);
 				$disabledText = __('Disabled', LLMS_At_TEXT_DOMAIN);
 				$enableAttendanceSelectArray = $this->enableSelectOptions;
-				$enableAttendanceSelectArray[0] .= '(' . ($isGlobalEnableAttendanceValue ? $enabledText : $disabledText) . ')';
+				$enableAttendanceSelectArray[''] .= ' (' . ($isGlobalEnableAttendanceValue ? $enabledText : $disabledText) . ')';
 
 				$enableAttendanceForStudentsSelectArray = $this->enableSelectOptions;
-				$enableAttendanceForStudentsSelectArray[0] .= '(' . ($isGlobalEnableAttendanceForStudentsValue ? $enabledText : $disabledText) . ')';
+				$enableAttendanceForStudentsSelectArray[''] .= ' (' . ($isGlobalEnableAttendanceForStudentsValue ? $enabledText : $disabledText) . ')';
         ?>
         <div class="llmsat-field">
 					<?php
