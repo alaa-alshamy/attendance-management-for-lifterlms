@@ -114,7 +114,7 @@ class LLMS_Attendance {
 
 		// options keys
 		define( 'LLMS_AT_VERSION_OPTION_KEY', 'at_llms_version' );
-		define( 'LLMS_AT_OPTIONS_OPTION_KEY', 'at_llms_options' );
+		define( 'LLMS_AT_ENABLE_DELETE_DATA_OPTION_KEY', 'at_llms_enable_delete_data' );
 		define( 'LLMS_AT_ENABLE_OPTION_KEY', 'at_llms_integration_lifterlms_attendance_enable' );
 		define( 'LLMS_AT_GLOBAL_ENABLE_OPTION_KEY', 'at_llms_integration_global_attendance_enable' );
 		define( 'LLMS_AT_GLOBAL_ENABLE_FOR_STUDENTS_OPTION_KEY', 'at_llms_integration_global_attendance_enable_for_students' );

@@ -10,9 +10,7 @@ if (!defined('WP_UNINSTALL_PLUGIN')) {
 	die;
 }
 
-$llmsat_options = get_option(LLMS_AT_OPTIONS_OPTION_KEY, []);
-
-if($llmsat_options['llmsat_delete_attendance'] === 'on') {
+if('yes' === get_option(LLMS_AT_ENABLE_DELETE_DATA_OPTION_KEY, 'no')) {
 	global $wpdb;
 
 	// delete attendance course settings

@@ -77,22 +77,19 @@ class LLMS_Attendance_Opions {
 	 * Save Plugin's Settings
 	 */
 	public function llmsat_admin_settings_save() {
-		if( isset( $_POST['llmsat_settings_submit'] ) ) {
+		if(isset($_POST['llmsat_settings_submit'])) {
+			$delete_settings = $_POST['llmsat_delete_attendance'] ?? '';
+			$delete_settings = $delete_settings ? 'yes' : 'no';
 
-			$llmsat_options  = array();
-			$delete_settings = sanitize_text_field( isset( $_POST['llmsat_delete_attendance'] ) ? $_POST['llmsat_delete_attendance'] : 'no' );
-
-			$llmsat_options['llmsat_delete_attendance'] = $delete_settings;
-
-			update_option(LLMS_AT_OPTIONS_OPTION_KEY, $llmsat_options);
+			update_option(LLMS_AT_ENABLE_DELETE_DATA_OPTION_KEY, $delete_settings);
 			wp_safe_redirect( add_query_arg( 'settings-updated', 'true', sanitize_text_field( $_POST['_wp_http_referer'] ) ) );
+
 			$class = 'llmsat-notice hidden notice notice-success is-dismissible';
 			$message = __( 'Settings Updated.', LLMS_At_TEXT_DOMAIN );
 
 			printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
 			exit;
-        }
-
+		}
 	}
 
 	/**
