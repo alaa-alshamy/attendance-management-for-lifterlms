@@ -29,49 +29,49 @@ class LLMS_Attendance_Opions {
      */
 	public function __construct() {
 
-	    $this->page_tab = sanitize_text_field( isset( $_GET['tab'] ) ? $_GET['tab'] : 'general' );
-		add_action( 
-			'admin_menu', 
+		$this->page_tab = sanitize_text_field( isset( $_GET['tab'] ) ? $_GET['tab'] : 'general' );
+		add_action(
+			'admin_menu',
 			[ $this, 'llmsat_menu' ]
 		);
 
-		add_action( 
-			'admin_notices', 
-			[ $this, 'llmsat_admin_notices' ] 
+		add_action(
+			'admin_notices',
+			[ $this, 'llmsat_admin_notices' ]
 		);
 
-		add_action( 
-			'admin_post_llmsat_admin_settings', 
-			[ $this, 'llmsat_admin_settings_save' ] 
+		add_action(
+			'admin_post_llmsat_admin_settings',
+			[ $this, 'llmsat_admin_settings_save' ]
 		);
 
-        add_filter( 
-			'admin_footer_text', 
-			[ $this, 'remove_footer_admin' ] 
+        add_filter(
+			'admin_footer_text',
+			[ $this, 'remove_footer_admin' ]
 		);
 	}
 
-	
+
 	/**
-     * Display Notices
-     */
-    public function llmsat_admin_notices() {
+	 * Display Notices
+	 */
+	public function llmsat_admin_notices() {
 
 		$screen   = get_current_screen();
 		$updated  = false;
-        if( $screen->base != 'lifterlms_page_lifterlms-attendance-management-options' ) {
-            return;
+		if( $screen->base != 'lifterlms_page_lifterlms-attendance-management-options' ) {
+			return;
 		}
-		
+
 		if( isset( $_GET[ 'settings-updated' ] ) ) {
 			$updated = sanitize_text_field( $_GET[ 'settings-updated' ] );
 		}
-        if( isset( $_POST['llmsat_settings_submit'] ) || $updated  == true ) {
-            $class = 'notice notice-success is-dismissible';
-            $message = __( 'Settings Saved', LLMS_At_TEXT_DOMAIN );
-            printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
-        }
-    }
+		if( isset( $_POST['llmsat_settings_submit'] ) || $updated  == true ) {
+				$class = 'notice notice-success is-dismissible';
+				$message = __( 'Settings Saved', LLMS_At_TEXT_DOMAIN );
+				printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
+		}
+	}
 
 	/**
 	 * Save Plugin's Settings
@@ -206,44 +206,40 @@ class LLMS_Attendance_Opions {
 		<?php
 	}
 
-    /**
-     * LLMS_Attendance Settings Sections
-     *
-     * @return mixed|void
-     */
-    public function llmsat_get_setting_sections() {
+	/**
+	 * LLMS_Attendance Settings Sections
+	 *
+	 * @return mixed|void
+	 */
+	public function llmsat_get_setting_sections() {
 
-        $llmsat_settings_sections = array(
+		$llmsat_settings_sections = array(
 			'general' => array(
-                'title' => __( 'General Option', LLMS_At_TEXT_DOMAIN ),
-                'icon' => 'dashicons-admin-generic',
-            ),
-        );
-
-        return apply_filters( 'llmsat_settings_sections', $llmsat_settings_sections );
-
-    }
-	
-
-    /**
-     * Add footer branding
-     *
-     * @param $footer_text
-     * @return mixed
-     */
-    function remove_footer_admin ( $footer_text ) {
-        if( isset( $_GET['page'] ) && ( sanitize_text_field( $_GET['page'] ) == 'lifterlms-attendance-management-options' ) ) {
-			_e( 'Fueled by <a href="http://www.wordpress.org" target="_blank">WordPress</a> | developed and designed by 
-			<a href="https:faizanhaidar.com/" target="_blank">Muhammad Faizan Haidar</a>
-			</p>',
-			LLMS_At_TEXT_DOMAIN 
+				'title' => __( 'General Option', LLMS_At_TEXT_DOMAIN ),
+				'icon' => 'dashicons-admin-generic',
+			),
 		);
 
-        } else {
+		return apply_filters( 'llmsat_settings_sections', $llmsat_settings_sections );
+	}
 
-            return $footer_text;
-        }
-    }
+	/**
+	 * Add footer branding
+	 *
+	 * @param $footer_text
+	 * @return mixed
+	 */
+	function remove_footer_admin ( $footer_text ) {
+		if( isset( $_GET['page'] ) && ( sanitize_text_field( $_GET['page'] ) == 'lifterlms-attendance-management-options' ) ) {
+			_e( 'Fueled by <a href="http://www.wordpress.org" target="_blank">WordPress</a> | developed and designed by 
+				<a href="https:faizanhaidar.com/" target="_blank">Muhammad Faizan Haidar</a>
+				</p>',
+				LLMS_At_TEXT_DOMAIN
+			);
+		} else {
+			return $footer_text;
+		}
+	}
 }
 
 $GLOBALS['LLMS_Attendance_Opions'] = new LLMS_Attendance_Opions();
