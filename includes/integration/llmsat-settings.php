@@ -50,7 +50,7 @@ class LLMS_Attendance_Settings {
 		$content[] = array(
 			'desc' 		=> __( 'Use Attendance Management For LifterLMS Addon.', LLMS_At_TEXT_DOMAIN ),
 			'default'	=> 'no',
-			'id' 		=> 'llms_integration_lifterlms_attendance_enabled',
+			'id' 		=> LLMS_AT_ENABLE_OPTION_KEY,
 			'type' 		=> 'checkbox',
 			'title'     => __( 'Enable / Disable', LLMS_At_TEXT_DOMAIN ),
 		);

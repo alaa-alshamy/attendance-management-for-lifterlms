@@ -67,11 +67,11 @@ class LLMS_Attendance {
 			return;
 		}
 
-		update_option( 'llmsat_version', self::VERSION );
-		$default_values = get_option( 'llmsat_version' );
+		update_option(LLMS_AT_VERSION_OPTION_KEY, self::VERSION);
+		$default_values = get_option(LLMS_AT_VERSION_OPTION_KEY);
 		if ( empty( $default_values ) ) {
 			$form_data = [];
-			update_option( 'llmsat_version', $form_data );
+			update_option(LLMS_AT_VERSION_OPTION_KEY, $form_data);
 		}
 	}
 
@@ -81,7 +81,7 @@ class LLMS_Attendance {
 	 * @return void
 	 */
 	public static function deactivation() {
-		delete_option( 'llmsat_version' );
+		delete_option(LLMS_AT_VERSION_OPTION_KEY);
 
 		return false;
 	}
@@ -92,7 +92,7 @@ class LLMS_Attendance {
 	 * @return void
 	 */
 	public function upgrade() {
-		if ( get_option( 'llmsat_version' ) != self::VERSION ) {
+		if ( get_option(LLMS_AT_VERSION_OPTION_KEY) != self::VERSION ) {
 		}
 	}
 
@@ -107,14 +107,17 @@ class LLMS_Attendance {
 		define( 'LLMS_At_TEXT_DOMAIN', 'llms-attendance' );
 
 		// meta keys
-		define( 'LLMS_AT_COUNTER_META_KEY', '_llmsat_counter' );
-		define( 'LLMS_AT_ENABLE_META_KEY', '_llmsat_enable' );
-		define( 'LLMS_AT_ENABLE_FOR_STUDENTS_META_KEY', '_llmsat_enable_for_students' );
-		define( 'LLMS_AT_MAX_COUNT_META_KEY', '_llmsat_max_count' );
+		define( 'LLMS_AT_COUNTER_META_KEY', '_at_llms_counter' );
+		define( 'LLMS_AT_ENABLE_META_KEY', '_at_llms_enable' );
+		define( 'LLMS_AT_ENABLE_FOR_STUDENTS_META_KEY', '_at_llms_enable_for_students' );
+		define( 'LLMS_AT_MAX_COUNT_META_KEY', '_at_llms_max_count' );
 
 		// options keys
-		define( 'LLMS_AT_GLOBAL_ENABLE_OPTION_KEY', 'llms_integration_global_attendance_enable' );
-		define( 'LLMS_AT_GLOBAL_ENABLE_FOR_STUDENTS_OPTION_KEY', 'llms_integration_global_attendance_enable_for_students' );
+		define( 'LLMS_AT_VERSION_OPTION_KEY', 'at_llms_version' );
+		define( 'LLMS_AT_OPTIONS_OPTION_KEY', 'at_llms_options' );
+		define( 'LLMS_AT_ENABLE_OPTION_KEY', 'at_llms_integration_lifterlms_attendance_enable' );
+		define( 'LLMS_AT_GLOBAL_ENABLE_OPTION_KEY', 'at_llms_integration_global_attendance_enable' );
+		define( 'LLMS_AT_GLOBAL_ENABLE_FOR_STUDENTS_OPTION_KEY', 'at_llms_integration_global_attendance_enable_for_students' );
 
 		/**
 		 * Plugin Directory
@@ -137,7 +140,7 @@ class LLMS_Attendance {
 	 */
 	private function includes() {
 
-		if ( 'yes' === get_option( 'llms_integration_lifterlms_attendance_enabled', 'no' ) ) {
+		if ( 'yes' === get_option(LLMS_AT_ENABLE_OPTION_KEY, 'no') ) {
 
 			if ( file_exists( LLMS_At_INCLUDES_DIR . 'integration/llmsat-core-attendace.php' ) ) {
 

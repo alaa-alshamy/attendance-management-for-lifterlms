@@ -6,7 +6,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 
-$llmsat_options    = get_option( 'llmsat_options', array() );
+$llmsat_options    = get_option(LLMS_AT_OPTIONS_OPTION_KEY, []);
 
 $delete_attendance = !empty( $llmsat_options['llmsat_delete_attendance']) ? $llmsat_options['llmsat_delete_attendance'] : 'no';
 ?>
