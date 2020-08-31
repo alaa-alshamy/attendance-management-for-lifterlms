@@ -72,6 +72,7 @@ class LLMS_Attendance_List_Table_Class extends WP_List_Table {
 			if(
 				count( $enrolledStudentsIds ) > 0
 			) {
+		  	$maxAttendanceCount = absint(get_post_meta($course_id, LLMS_AT_MAX_COUNT_META_KEY, true));
 				foreach ( $enrolledStudentsIds as $studentId ) {
 					$studentId = absint( $studentId );
 
@@ -90,7 +91,6 @@ class LLMS_Attendance_List_Table_Class extends WP_List_Table {
 						&& $count
 					) {
 						$count = intval( $count );
-						$maxAttendanceCount = absint(get_post_meta($course_id, LLMS_AT_MAX_COUNT_META_KEY, true));
 						$users_array[] = array(
 							"id"          => $studentId,
 							"title"       => '<b><a href="' . get_author_posts_url( $studentId ) . '"> ' . $studentName . '</a></b>',

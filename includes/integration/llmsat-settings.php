@@ -92,7 +92,7 @@ class LLMS_Attendance_Settings {
 		$content[] = array(
 			'title' => __( 'Top "X" attendants shortcode', LLMS_At_TEXT_DOMAIN ),
 			'type'  => 'text',
-			'value' => '[llmsat_top_attendant course_id="y" students="x"]',
+			'value' => '[llmsat_top_attendant course_id="y" students_count="x"]',
 			'desc'  => '<br>'. __( 'It shows top "x" attendants in a given course id "y" by default it shows only 1 top attendant. Automatically retrieves current dates.', LLMS_At_TEXT_DOMAIN ). '</br>',
 			'id'    => 'lifterlms_attendance_top_attendant'
 		);
