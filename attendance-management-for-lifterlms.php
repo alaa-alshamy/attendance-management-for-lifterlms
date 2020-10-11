@@ -47,7 +47,7 @@ class LLMS_Attendance {
 	 * @return LLMS_Attendance
 	 */
 	public static function instance() {
-		if ( is_null( self::$instance ) && ! ( self::$instance instanceof LLMS_Attendance ) ) {
+		if ( is_null( self::$instance ) ) {
 			self::$instance = new self;
 			self::$instance->setup_constants();
 			self::$instance->includes();
