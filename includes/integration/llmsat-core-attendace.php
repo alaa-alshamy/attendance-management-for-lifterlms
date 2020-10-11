@@ -76,8 +76,10 @@ class LLMS_AT_Core {
 			$attendance_button_text = __( "Mark Present", LLMS_At_TEXT_DOMAIN );
 			$attendance_button_text = apply_filters( "llms_attendance_button_text", $attendance_button_text );
 
-			$output = '<input type="submit" value="'.$attendance_button_text.'" href="javascript:;" onclick="llmsat_attendance_btn_ajax('.$course_id.', '.$user_id.')" class="llmsat-attendance-btn llmsat-btn"/>';
+			$output = '<div class="llmsat-button-container">';
+			$output .= '<input type="submit" value="'.$attendance_button_text.'" href="javascript:;" onclick="llmsat_attendance_btn_ajax('.$course_id.', '.$user_id.')" class="llmsat-attendance-btn llmsat-btn"/>';
             $output .= '<div id="llmsat-ajax-response-id" class="llmsat-ajax-response"><span></span></div>';
+			$output .= '</div>';
 
 			echo $output;
         }

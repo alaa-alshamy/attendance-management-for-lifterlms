@@ -62,19 +62,19 @@
 ul, #llmsat-myUL {
     list-style-type: none;
   }
-  
+
   /* Remove margins and padding from the parent ul */
   #llmsat-myUL {
     margin: 0;
     padding: 0;
   }
-  
+
   /* Style the caret/arrow */
   .llmsat-caret {
-    cursor: pointer; 
+    cursor: pointer;
     user-select: none; /* Prevent text selection */
   }
-  
+
   /* Create the caret/arrow with a unicode, and style it */
   .llmsat-caret::before {
     content: "\25B6";
@@ -82,12 +82,12 @@ ul, #llmsat-myUL {
     display: inline-block;
     margin-right: 6px;
   }
-  
+
   /* Rotate the caret/arrow icon when clicked on (using JavaScript) */
   .llmsat-caret-down::before {
-    transform: rotate(90deg); 
+    transform: rotate(90deg);
   }
-  
+
   /* Hide the nested list */
   .llmsat-nested {
     display: none;
@@ -98,7 +98,7 @@ ul, #llmsat-myUL {
     color: black;
     display: inline-block;
     margin-right: 6px;
-    
+
   }
   .llmsat-diceychild li {
     margin-left:35px;
@@ -130,4 +130,9 @@ ul, #llmsat-myUL {
   .llmsat-dicey li:nth-child(n):before {
     color: black;
     content: "\2680";
+  }
+
+  .llmsat-button-container {
+    padding: 10px;
+    text-align: center;
   }
